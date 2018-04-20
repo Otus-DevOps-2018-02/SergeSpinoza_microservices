@@ -1,0 +1,41 @@
+REPOSITORY                                          TAG                 IMAGE ID            CREATED             SIZE
+sergespinoza/ubuntu-tmp-file                        latest              fda85f677032        42 seconds ago      113MB
+ubuntu                                              16.04               c9d990395902        4 days ago          113MB
+hello-world                                         latest              e38bc07ac18e        6 days ago          1.85kB
+nginx                                               latest              b175e7467d66        7 days ago          109MB
+logstash                                            latest              c4867dd9f438        3 months ago        740MB
+docker.elastic.co/logstash/logstash-oss             6.1.0               d252e3e90148        4 months ago        642MB
+dockerelk_logstash                                  latest              d252e3e90148        4 months ago        642MB
+docker.elastic.co/kibana/kibana-oss                 6.1.0               3195bc2e4912        4 months ago        507MB
+dockerelk_kibana                                    latest              3195bc2e4912        4 months ago        507MB
+docker.elastic.co/elasticsearch/elasticsearch-oss   6.1.0               8819afa25e62        4 months ago        457MB
+dockerelk_elasticsearch                             latest              8819afa25e62        4 months ago        457MB
+znakdocker1/bot.helpdesk.ch                         latest              9df24478890c        4 months ago        710MB
+python                                              3                   79e1dc9af1c1        5 months ago        691MB
+mariadb                                             latest              7fcf8c1a96d2        5 months ago        397MB
+mysql                                               5.7                 5709795eeffa        5 months ago        408MB
+php                                                 7.0-apache          d032fab4d8a1        5 months ago        390MB
+python                                              3-onbuild           dd51112942b4        6 months ago        690MB
+ubuntu                                              14.04               dea1945146b9        7 months ago        188MB
+busybox                                             latest              54511612f1c4        7 months ago        1.13MB
+elasticsearch                                       latest              d1ac13423d3c        7 months ago        580MB
+elasticsearch                                       2.3                 1c3e7681c53c        16 months ago       346MB
+
+
+## Отличия между контейнером и образом 
+
+Основное отличие в том, что контейнер - это созданный и запущенный экземпляр образа (т.е. зафиксированного состояния или, если можно так назвать, "шаблона"). Он (контейнер) имеет такие характеристики как:
+- Дату создания;
+- Ссылку (путь до) на процесс с pid 1;
+- Статус (запущен/остановлен);
+- id образа, из которого он создан и запущен;
+- Рабочую директорию ()
+- Настройки и параметры сети;
+- Примонтированные volume (если есть).
+
+Образ имеет такие основные характеристики как:
+- Данные о репозитории и версии;
+- Дату создания;
+- id контейнера, из которого он был создан (при команде commit);
+- Путь до исполняемого файла, процесс которого будет иметь основной pid 1 при запуске контейнера из этого образа;
+- Слои из которых он состоит.
