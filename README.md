@@ -58,7 +58,7 @@ SergeSpinoza microservices repository
   - `docker run -d --network=reddit --network-alias=post_2 --env POST_DATABASE_HOST=post_db_2 <your-dockerhub-login>/post:1.0`
   - `docker run -d --network=reddit --network-alias=comment_2 --env COMMENT_DATABASE_HOST=comment_db_2 <your-dockerhub-login>/comment:1.0`
   - `docker run -d --network=reddit -p 9292:9292 --env POST_SERVICE_HOST=post_2 --env COMMENT_SERVICE_HOST=comment_2 <your-dockerhub-login>/ui:1.0`
-- Сборка образа ui на базе образа alipe описана в файле **Dockerfile_alpine**. Для запуска сборки необходимо выполнить команду `docker build -f ./ui/Dockerfile_alpine -t <your-dockerhub-login>/ui:3.0 ./ui`. Размер образа уменьшился до 58MB;
+- Сборка образа ui на базе образа alpine описана в файле **Dockerfile_alpine**. Для запуска сборки необходимо выполнить команду `docker build -f ./ui/Dockerfile_alpine -t <your-dockerhub-login>/ui:3.0 ./ui`. Размер образа уменьшился до 58MB;
 
 
 ## Дополнительное задание с **
