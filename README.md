@@ -49,6 +49,7 @@ SergeSpinoza microservices repository
 - Созданы 3 docker образа: post:1.0, comment:1.0 и ui:1.0;
 - Ответ на вопрос на 13 слайде: сборка по команде `docker build -t s1spinoza/ui:1.0 ./ui` начинается с 6 шага, потому что был использован кеш. Использовался один и тот же базовый образ и первые 4 команды как и в образе `comment:1.0`, который мы собирали перед этим;
 - Проверена связка работы всех контейнеров, запущенных из созданных образов; 
+- Создан docker volume и подключен к mongodb, чтобы данные не пропадали при остановке контейнера;
 
 
 ## Дополнительное задание со *
@@ -58,7 +59,6 @@ SergeSpinoza microservices repository
   - `docker run -d --network=reddit --network-alias=comment_2 --env COMMENT_DATABASE_HOST=comment_db_2 <your-dockerhub-login>/comment:1.0`
   - `docker run -d --network=reddit -p 9292:9292 --env POST_SERVICE_HOST=post_2 --env COMMENT_SERVICE_HOST=comment_2 <your-dockerhub-login>/ui:1.0`
 - Сборка образа ui на базе образа alipe описана в файле **Dockerfile_alpine**. Для запуска сборки необходимо выполнить команду `docker build -f ./ui/Dockerfile_alpine -t <your-dockerhub-login>/ui:3.0 ./ui`. Размер образа уменьшился до 58MB;
-- 
 
 
 ## Дополнительное задание с **
