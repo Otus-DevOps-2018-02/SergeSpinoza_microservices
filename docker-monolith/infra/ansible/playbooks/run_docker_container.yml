@@ -1,0 +1,16 @@
+---
+- name: Docker container run
+  hosts: all
+  become: true
+  gather_facts: False
+
+  tasks:
+    - name: otus-reddit container
+      docker_container:
+        name: reddit
+        image: s1spinoza/otus-reddit:1.0
+        pull: yes
+        state: started
+        restart: yes
+        ports:
+        - "9292:9292"
