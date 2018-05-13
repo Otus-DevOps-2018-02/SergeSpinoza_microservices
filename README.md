@@ -81,3 +81,34 @@ SergeSpinoza microservices repository
 - Базовое имя проекта образуется из названия директории, где расположен docker-compose файл;
 - Базовое имя проекта можно задать при запуске, используя ключ `-p`, например `docker-compose -p reddit_app up -d`. Также, название проекта задать можно в файле .env параметром `COMPOSE_PROJECT_NAME`
 - Создан файл docker-compose.override.yml который переопределяет необходимые параметры (запуск puma с флагами --debug и -w 2), и монтирует директории, позволяя менять код приложения не выполняя пересборку образа. 
+
+
+# Homework-17
+
+## Основное задание
+- Создан инстанс для установки GitLab CI. Для запуска инстанса и установки docker-compose необходимо выполнить команды:
+  - `docker-machine create --driver google \
+--google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts \
+--google-machine-type n1-standard-1 \
+--google-disk-size 100 \
+--google-zone europe-west1-b \
+gitlab-ci`;
+  - `docker-machine ssh gitlab-ci`;
+  - `apt install docker-compose`;
+- Выполнена omnibus-установка GitLab CI. Для установки необходимо на инстансе gitlab-ci выполнить команды: 
+  - `mkdir -p /srv/gitlab/config /srv/gitlab/data /srv/gitlab/logs`;
+  - `cd /srv/gitlab/`;
+  - `touch docker-compose.yml`;
+  - содержимое файла docker-compose.yml взять отсюда: https://gist.github.com/Nklya/c2ca40a128758e2dc2244beb09caebe1
+  - для запуска выполнить команду `docker-compose up -d` из директории /srv/gitlab
+- Выполнена настройка GitLab CI: создана группа, проект, CI/CD Pipeline;
+- В проекте создан файл .gitlab-ci.yml, описывающий Pipeline;
+- Запущен и зарегистрирован Runner для GitLab CI;
+- Протестирован проект.
+
+## Дополнительное задание со *
+- Автоматизировано развертывание и регистрация Gitlab CI Runner. Для автоматического развертывания необходимого количества Gitlab CI Runner необходимо выполнить скрипт run-register-runners.sh, предварительно настроив в нем параметры: 
+  - `RUNNERS` - количество Gitlab CI Runner;
+  - `URL` - GitLab URL;
+  - `TOKEN` - GitLab registration token.
+- Настроена интеграция с тестовым Slack-чатом (Slack-канал #serge_fedonin). 
