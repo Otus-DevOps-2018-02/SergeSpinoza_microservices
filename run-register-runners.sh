@@ -1,5 +1,10 @@
 #!/bin/bash
-for (( c=1; c<=5; c++ ))
+
+RUNNERS=1
+URL="http://35.233.57.201/"
+TOKEN="4aYbJUCGBgLR-VzANSVs"
+
+for (( c=1; c<=$RUNNERS; c++ ))
 do
   docker run -d --name gitlab-runner-$c --restart always \
     -v /srv/gitlab-runner/config:/etc/gitlab-runner \
@@ -10,8 +15,8 @@ do
     --non-interactive \
     --executor "docker" \
     --docker-image alpine:latest \
-    --url "http://35.233.57.201/" \
-    --registration-token "4aYbJUCGBgLR-VzANSVs" \
+    --url $URL \
+    --registration-token $TOKEN \
     --description "my-runner-$c" \
     --tag-list "linux,xenial,ubuntu,docker" \
     --run-untagged \
