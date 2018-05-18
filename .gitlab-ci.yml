@@ -7,12 +7,16 @@ stages:
 variables:
   DATABASE_URL: 'mongodb://mongo/user_posts'
 
-before_script:
-  - cd reddit
-  - bundle install
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - docker-machine/
 
 create-server:
   stage: create-server
+  cache:
+    key: ${CACHE_MACHINE}
+    untracked: true
   when: manual
   script:
     - apt-get update
@@ -23,21 +27,12 @@ create-server:
     - apt-get update
     - apt-get -y install docker-ce
     - base=https://github.com/docker/machine/releases/download/v0.14.0 && curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/tmp/docker-machine && install /tmp/docker-machine /usr/local/bin/docker-machine
-    - docker-machine create --driver google --google-project docker-201808 --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts --google-machine-type n1-standard-1 --google-zone europe-west1-b stage-host
-    - git clone https://github.com/bhurlow/machine-share.git
-    - apt-get install npm -y
-    - apt-get install nodejs-legacy -y
-    - npm install -g machine-share
-    - machine-export stage-host
-  artifacts:
-    paths:
-    - stage-host.zip
+    - docker-machine -s docker-machine/ create --driver google --google-project docker-201808 --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts --google-machine-type n1-standard-1 --google-zone europe-west1-b stage-host
+    - docker-machine -s docker-machine/ ls 
 
 delete-server:
   stage: delete-server
   when: manual
-  dependencies:
-    - create-server
   script:
     - apt-get update
     - apt-get -y install apt-transport-https ca-certificates curl software-properties-common
@@ -47,11 +42,7 @@ delete-server:
     - apt-get update
     - apt-get -y install docker-ce
     - base=https://github.com/docker/machine/releases/download/v0.14.0 && curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/tmp/docker-machine && install /tmp/docker-machine /usr/local/bin/docker-machine
-    - git clone https://github.com/bhurlow/machine-share.git
-    - apt-get install npm -y
-    - apt-get install nodejs-legacy -y
-    - npm install -g machine-share
-    - machine-import stage-host.zip
-    - docker-machine ls
+    - docker-machine -s docker-machine/ ls 
+    - docker-machine -s docker-machine/ rm -y stage-host
 
 
