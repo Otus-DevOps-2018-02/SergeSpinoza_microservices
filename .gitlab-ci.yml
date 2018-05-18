@@ -1,5 +1,9 @@
 image: ruby:2.4.2
 
+volumes:
+  - /src:/src rw persist
+
+
 stages:
   - build
   - test
@@ -65,6 +69,7 @@ create-server:
     - apt-get -y install docker-ce
     - base=https://github.com/docker/machine/releases/download/v0.14.0 && curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/tmp/docker-machine && install /tmp/docker-machine /usr/local/bin/docker-machine
     - docker-machine create --driver google --google-project docker-201808 --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts --google-machine-type n1-standard-1 --google-zone europe-west1-b stage-host
+    - touch /src/123.txt
 
 staging:
   stage: stage
