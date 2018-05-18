@@ -1,16 +1,7 @@
 image: ruby:2.4.2
 
-volumes:
-  - /src:/src rw persist
-
-
 stages:
-  - build
-  - test
-  - review
   - create-server
-  - stage
-  - production
   - delete-server
 
 variables:
@@ -19,42 +10,6 @@ variables:
 before_script:
   - cd reddit
   - bundle install
-
-build_job:
-  stage: build
-  script:
-    - echo 'Building'
-
-test_unit_job:
-  stage: test
-  services:
-    - mongo:latest
-  script:
-    - ruby simpletest.rb
-
-test_integration_job:
-  stage: test
-  script:
-    - echo 'Testing 2'
-
-deploy_dev_job:
-  stage: review
-  script:
-    - echo 'Deploy'
-  environment:
-    name: dev
-    url: http://dev.example.com
-
-branch review:
-  stage: review
-  script: echo "Deploy to $CI_ENVIRONMENT_SLUG"
-  environment:
-    name: branch/$CI_COMMIT_REF_NAME
-    url: http://$CI_ENVIRONMENT_SLUG.example.com
-  only:
-    - branches
-  except:
-    - master
 
 create-server:
   stage: create-server
@@ -69,26 +24,34 @@ create-server:
     - apt-get -y install docker-ce
     - base=https://github.com/docker/machine/releases/download/v0.14.0 && curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/tmp/docker-machine && install /tmp/docker-machine /usr/local/bin/docker-machine
     - docker-machine create --driver google --google-project docker-201808 --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts --google-machine-type n1-standard-1 --google-zone europe-west1-b stage-host
-    - touch /src/123.txt
+    - git clone https://github.com/bhurlow/machine-share.git
+    - apt-get update
+    - apt-get install npm -y
+    - npm install -g machine-share
+    - machine-export stage-host
+  artifacts:
+    paths:
+    - stage-host.zip
 
-staging:
-  stage: stage
+delete-server:
+  stage: delete-server
   when: manual
-  only:
-    - /^\d+\.\d+.\d+/
+  dependencies:
+    - create-server
   script:
-    - echo 'Deploy'
-  environment:
-    name: stage
-    url: https://beta.example.com
+    - apt-get update
+    - apt-get -y install apt-transport-https ca-certificates curl software-properties-common
+    - curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+    - apt-key fingerprint 0EBFCD88
+    - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+    - apt-get update
+    - apt-get -y install docker-ce
+    - base=https://github.com/docker/machine/releases/download/v0.14.0 && curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/tmp/docker-machine && install /tmp/docker-machine /usr/local/bin/docker-machine
+    - git clone https://github.com/bhurlow/machine-share.git
+    - apt-get update
+    - apt-get install npm -y
+    - npm install -g machine-share
+    - machine-import stage-host.zip
+    - docker-machine ls
 
-production:
-  stage: production
-  when: manual
-  only:
-    - /^\d+\.\d+.\d+/
-  script:
-    - echo 'Deploy'
-  environment:
-    name: production
-    url: https://example.com
+
