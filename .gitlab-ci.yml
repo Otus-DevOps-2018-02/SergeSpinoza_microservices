@@ -22,7 +22,7 @@ build_job:
     - cd ${PATH_TO_DOCKERRFILE}
     - docker build -t ${DOCKER_IMAGE} .
     - docker image tag ${DOCKER_IMAGE} ${DOCKER_IMAGE_HUB}
-    - docker login -u ${HUB_LOGIN} -p ${HUB_PASSWORD}
+    - docker login -u ${DOCKER_HUB_LOGIN} -p ${DOCKER_HUB_PASS}
     - docker push ${DOCKER_IMAGE_HUB}
 
 create-server:
