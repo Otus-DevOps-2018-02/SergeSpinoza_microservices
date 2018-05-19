@@ -1,12 +1,27 @@
 image: ruby:2.4.2
 
 stages:
+  - build
   - create-server
   - delete-server
 
 variables:
   CERT_PATH: certs
   INSTANCE_NAME: stage-host
+  DOCKER_HUB_REPO: 's1spinoza/gitlab_otus'
+  PATH_TO_DOCKERRFILE: docker-monolith
+  DOCKER_IMAGE: "reddit:${CI_COMMIT_REF_SLUG}"
+  DOCKER_IMAGE_HUB: "${DOCKER_HUB_REPO}:${CI_COMMIT_REF_SLUG}-${CI_PIPELINE_ID}"
+
+build_job:
+  image: docker:latest
+  stage: build
+  script:
+    - cd ${PATH_TO_DOCKERRFILE}
+    - docker build -t ${DOCKER_IMAGE}
+    - docker image tag ${DOCKER_IMAGE} ${DOCKER_IMAGE_HUB}
+    - docker login -u ${HUB_LOGIN} -p ${HUB_PASSWORD}
+    - docker push ${DOCKER_IMAGE_HUB}
 
 create-server:
   stage: create-server
