@@ -1,21 +1,17 @@
-image: ruby:2.4.2
+image: docker:latest
 
 stages:
   - create-server
   - delete-server
 
 variables:
-  DATABASE_URL: 'mongodb://mongo/user_posts'
-
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-  - docker-machine/
+  CERT_PATH: certs
+  INSTANCE_NAME: stage-host
 
 create-server:
   stage: create-server
   cache:
-    key: ${CACHE_MACHINE}
+    key: ${CI_COMMIT_REF_SLUG}
     untracked: true
   when: manual
   script:
@@ -25,14 +21,16 @@ create-server:
     - apt-key fingerprint 0EBFCD88
     - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
     - apt-get update
-    - apt-get -y install docker-ce
     - base=https://github.com/docker/machine/releases/download/v0.14.0 && curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/tmp/docker-machine && install /tmp/docker-machine /usr/local/bin/docker-machine
-    - docker-machine -s docker-machine/ create --driver google --google-project docker-201808 --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts --google-machine-type n1-standard-1 --google-zone europe-west1-b stage-host
-    - docker-machine -s docker-machine/ ls 
-    - ls -la ./docker-machine/
+    - docker-machine -s ${CERT_PATH} create --driver google --google-project docker-201808 --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts --google-machine-type n1-standard-1 --google-zone europe-west1-b ${INSTANCE_NAME}
+    - docker-machine -s ${CERT_PATH} ls 
+    - ls -la ${CERT_PATH}
 
 delete-server:
   stage: delete-server
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    untracked: true
   when: manual
   script:
     - ls -la ./docker-machine/
@@ -44,7 +42,7 @@ delete-server:
     - apt-get update
     - apt-get -y install docker-ce
     - base=https://github.com/docker/machine/releases/download/v0.14.0 && curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/tmp/docker-machine && install /tmp/docker-machine /usr/local/bin/docker-machine
-    - docker-machine -s docker-machine/ ls 
-    - docker-machine -s docker-machine/ rm -y stage-host
+    - docker-machine -s ${CERT_PATH} ls 
+    - docker-machine -s ${CERT_PATH} rm -y ${INSTANCE_NAME}
 
 
