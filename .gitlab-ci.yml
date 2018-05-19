@@ -34,7 +34,7 @@ delete-server:
     untracked: true
   when: manual
   script:
-    - ls -la ./docker-machine/
+    - ls -la ${CERT_PATH}
     - apt-get update
     - apt-get -y install apt-transport-https ca-certificates curl software-properties-common
     - curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
