@@ -2,8 +2,12 @@ image: ruby:2.4.2
 
 stages:
   - build
+  # - test
+  - review
   - create-server
   - delete-server
+  - stage
+  - production
 
 variables:
   CERT_PATH: certs
@@ -12,6 +16,12 @@ variables:
   PATH_TO_DOCKERRFILE: docker-monolith
   DOCKER_IMAGE: "reddit:${CI_COMMIT_REF_SLUG}"
   DOCKER_IMAGE_HUB: "${DOCKER_HUB_REPO}:${CI_COMMIT_REF_SLUG}-${CI_PIPELINE_ID}"
+
+### Bild job orig ###
+# build_job:
+#  stage: build
+#  script:
+#    - echo 'Building'
 
 build_job:
   image: docker:latest
@@ -25,6 +35,40 @@ build_job:
     - docker login -u ${DOCKER_HUB_LOGIN} -p ${DOCKER_HUB_PASS}
     - docker push ${DOCKER_IMAGE_HUB}
 
+### Test job from base file ###
+# test_unit_job:
+#  stage: test
+#  services:
+#    - mongo:latest
+#  script:
+#    - ruby simpletest.rb
+
+# test_integration_job:
+#  stage: test
+#  script:
+#    - echo 'Testing 2'
+
+### Review from base file ### 
+deploy_dev_job:
+  stage: review
+  script:
+    - echo 'Deploy'
+  environment:
+    name: dev
+    url: http://dev.example.com
+
+branch review:
+  stage: review
+  script: echo "Deploy to $CI_ENVIRONMENT_SLUG"
+  environment:
+    name: branch/$CI_COMMIT_REF_NAME
+    url: http://$CI_ENVIRONMENT_SLUG.example.com
+  only:
+    - branches
+  except:
+    - master
+###
+
 create-server:
   image: docker:latest
   services:
@@ -33,7 +77,6 @@ create-server:
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     untracked: true
-  when: manual
   script:
     - apk update && apk add ca-certificates curl jq
     - base=https://github.com/docker/machine/releases/download/v0.14.0 && curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/tmp/docker-machine && install /tmp/docker-machine /usr/local/bin/docker-machine
@@ -44,10 +87,10 @@ create-server:
   environment:
     name: branch/${CI_COMMIT_REF_SLUG}
     on_stop: delete-server
-#  only:
-#    - branches
-#  except:
-#    - master
+  only:
+    - branches
+  except:
+    - master
 
 delete-server:
   image: docker:latest
@@ -66,4 +109,26 @@ delete-server:
     name: branch/${CI_COMMIT_REF_SLUG}
     action: stop
 
+### Satge and production from orig file ### 
+staging:
+  stage: stage
+  when: manual
+  only:
+    - /^\d+\.\d+.\d+/
+  script:
+    - echo 'Deploy'
+  environment:
+    name: stage
+    url: https://beta.example.com
 
+production:
+  stage: production
+  when: manual
+  only:
+    - /^\d+\.\d+.\d+/
+  script:
+    - echo 'Deploy'
+  environment:
+    name: production
+    url: https://example.com
+###
