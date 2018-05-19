@@ -26,6 +26,9 @@ build_job:
     - docker push ${DOCKER_IMAGE_HUB}
 
 create-server:
+  image: docker:latest
+  services:
+    - docker:dind
   stage: create-server
   cache:
     key: ${CI_COMMIT_REF_SLUG}
@@ -33,16 +36,17 @@ create-server:
   when: manual
   script:
     - rm -rf ${CERT_PATH}/*
-    - apt-get update
-    - apt-get -y install apt-transport-https ca-certificates curl software-properties-common
-    - curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
-    - apt-key fingerprint 0EBFCD88
-    - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
-    - apt-get update
-    - apt-get -y install docker-ce
+    - apk update && apk add ca-certificates curl jq
+#    - apt-get update
+#    - apt-get -y install apt-transport-https ca-certificates curl software-properties-common
+#    - curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+#    - apt-key fingerprint 0EBFCD88
+#    - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+#    - apt-get update
+#    - apt-get -y install docker-ce
     - base=https://github.com/docker/machine/releases/download/v0.14.0 && curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/tmp/docker-machine && install /tmp/docker-machine /usr/local/bin/docker-machine
     - docker-machine -s ${CERT_PATH} create --driver google --google-project docker-201808 --google-machine-image https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/images/family/ubuntu-1604-lts --google-machine-type n1-standard-1 --google-zone europe-west1-b ${INSTANCE_NAME}
-    - eval $(docker-machine -s ${CERT_PATH} env ${INSTANCE_NAME})
+    - eval $(docker-machine -s ${CERT_PATH} env --shell sh ${INSTANCE_NAME})
     - docker pull ${DOCKER_IMAGE_HUB}
     - docker run -d -p 9292:9292 ${DOCKER_IMAGE_HUB}
 
