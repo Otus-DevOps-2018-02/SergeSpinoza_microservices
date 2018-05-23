@@ -20,5 +20,6 @@ do
     --description "my-runner-$c" \
     --tag-list "linux,xenial,ubuntu,docker" \
     --run-untagged \
+    --docker-privileged \
     --locked="false"
 done
