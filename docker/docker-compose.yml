@@ -10,18 +10,18 @@ services:
           - post_db
           - comment_db
   ui:
-    image: ${USERNAME}/ui:${VERSION_UI}
+    image: ${USER_NAME}/ui:${VERSION_UI}
     ports:
       - ${PORT}:9292/tcp
     networks:
       - front_net
   post:
-    image: ${USERNAME}/post:${VERSION_POST}
+    image: ${USER_NAME}/post:${VERSION_POST}
     networks:
       - back_net
       - front_net
   comment:
-    image: ${USERNAME}/comment:${VERSION_COMMENT}
+    image: ${USER_NAME}/comment:${VERSION_COMMENT}
     networks:
       - back_net
       - front_net
