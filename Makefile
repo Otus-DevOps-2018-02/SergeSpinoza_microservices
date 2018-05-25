@@ -3,7 +3,8 @@ USER_NAME ?= username
 IMAGE_PATH ?=	./src/ui \
                 ./src/comment \
                 ./src/post-py \
-                ./monitoring/prometheus
+                ./monitoring/prometheus \
+                ./monitoring/alertmanager
 
 all: build push 
 
