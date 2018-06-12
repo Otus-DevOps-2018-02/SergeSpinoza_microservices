@@ -1,0 +1,8 @@
+project = "YOUR_PROJECT"
+zone = "europe-west1-b"
+region = "europe-west1"
+cluster_name = "cluster-test"
+gke_min_version = "1.8.10-gke.0"
+node_count = 2
+node_disk_size = 20
+machine_type = "g1-small"

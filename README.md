@@ -232,3 +232,38 @@ ansible-playbook 14-cleanup.yml
 kubectl config delete-context kubernetes-the-hard-way
 kubectl config delete-cluster kubernetes-the-hard-way
 ```
+
+
+# Homework-23
+
+## Основное задание
+- Развернуто локальное окружение minikube для работы с Kubernetes;
+- Создали YAML-манифесты для работы приложения reddit в Kubernetes;
+- Самостоятельно сконфигурировали deployment компонента post;
+- Ознакомились с dashboard Kubernetes;
+- Ознакомились с работой Namespaces;
+- Развернули и запустили наше пришложение в Kubernetes в GCE;
+- Назначили роль cluster-admin для service account dashboard-а с помощью clusterrolebinding (привязки).
+
+## Дополнительное задание со * (#1)
+- Развернули Kubernetes кластер с помощью Terraform.
+
+## Дополнительное задание со * (#2)
+- Не выполнено, т.к. не понял, что конкретно нужно сделать.
+
+## Как запустить
+- Для развертывания локального кружения minikube неоходимо предварительно установить kubectl, VirtualBox, Minukube и выполнить команду `minikube start`;
+- Для развертывания кластера Kubernetes в GCE необходимо зайти в дирректорию kubernetes/terraform/stage и выполнить последовательно команды: `terraform init`, `terraform plan` и `terraform apply`, после убедиться, что кластер развернут;
+- Для развертывания приложения reddit в Kubernetes необходимо последовательно выполнить команды, находясь в директории `kubernetes/reddit`: `kubectl apply -f ./dev-namespace.yml`, `kubectl apply -f ./ -n dev`.
+
+## Список команд (моя памятка)
+`kubectl get nodes` - список нод
+`kubectl config get-contexts` - список всех контекстов
+`kubectl config current-context` - посмотреть текущий контекст
+`kubectl apply -f <filename/dir_with_yaml>` - запустить компонент в Kubernetes;
+`kubectl get deployment` - просмотр состояния Подов
+`kubectl get pods --selector component=ui` - вывести список подов, например для компонента UI;
+`kubectl port-forward <pod-name> local_port:pod_port` - проброс локального порта в Под;
+`kubectl get nodes -o wide` - просмотреть IP адреса нод;
+`kubectl describe service ui -n dev | grep NodePort` - найти номер порта (в данном случае для модуля ui в namespace dev);
+`kubectl proxy` - proxy для входа в dashboard Kubernetes;
