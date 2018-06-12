@@ -242,17 +242,17 @@ kubectl config delete-cluster kubernetes-the-hard-way
 - Самостоятельно сконфигурировали deployment компонента post;
 - Ознакомились с dashboard Kubernetes;
 - Ознакомились с работой Namespaces;
-- Развернули и запустили наше пришложение в Kubernetes в GCE;
-- Назначили роль cluster-admin для service account dashboard-а с помощью clusterrolebinding (привязки).
+- Развернуто и запущено наше приложение в Kubernetes в GCE;
+- Назначена роль cluster-admin для service account dashboard-а с помощью clusterrolebinding (привязки).
 
 ## Дополнительное задание со * (#1)
-- Развернули Kubernetes кластер с помощью Terraform.
+- Развернут Kubernetes кластер с помощью Terraform.
 
 ## Дополнительное задание со * (#2)
 - Не выполнено, т.к. не понял, что конкретно нужно сделать.
 
 ## Как запустить
-- Для развертывания локального кружения minikube неоходимо предварительно установить kubectl, VirtualBox, Minukube и выполнить команду `minikube start`;
+- Для развертывания локального кружения minikube необходимо предварительно установить kubectl, VirtualBox, Minukube и выполнить команду `minikube start`;
 - Для развертывания кластера Kubernetes в GCE необходимо зайти в дирректорию kubernetes/terraform/stage и выполнить последовательно команды: `terraform init`, `terraform plan` и `terraform apply`, после убедиться, что кластер развернут;
 - Для развертывания приложения reddit в Kubernetes необходимо последовательно выполнить команды, находясь в директории `kubernetes/reddit`: `kubectl apply -f ./dev-namespace.yml`, `kubectl apply -f ./ -n dev`.
 
