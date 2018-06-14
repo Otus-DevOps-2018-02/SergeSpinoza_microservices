@@ -17,7 +17,11 @@ endef
 build:
 	@$(foreach i, ${IMAGE_PATH}, echo 'Built image'; \
 		cd ${i}; \
-		docker build -t $(call docker_image_name,${i}) . ; \
+		if [ -f ./docker_build.sh ]; then \
+            bash docker_build.sh; \
+		else \
+		    docker build -t $(call docker_image_name,${i}) . ; \
+		fi; \
 		cd - ; \
 	)
 

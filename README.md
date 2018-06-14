@@ -184,3 +184,20 @@ gitlab-ci`;
 - Из директории `docker` последовательно выполнить команды: 
   - `docker-compose up -d`
   - `docker-compose -f docker-compose-monitoring.yml up -d`
+
+
+# Homework-21
+
+## Основное задание
+- Настроен стек EFK, в т.ч создан образ Fluentd с нужной нам конфигурацией и добавлен его запуск в docker-compose-logging.yml;
+- Настроена отправка логов в Fluentd;
+- Настроены фильтры и парсинг логов для сервисов post (json) и UI (grok)
+- Добавлен запуск Zipkin в docker-compose-logging.yml
+
+## Дополнительное задание со * 
+- Добавлен еще один grok парсер для полного разбора логов от сервиса UI;
+- Проблема с приложением была определена с помощью трейсинга с помощью зипкина - она находилось в сервисе (спане) post, который выполнялся 3 секунды. Проблема в 167 строке `time.sleep(3)` файла post_app.py. 
+
+## Как запустить
+- Собрать образы, выполнив из корня репозитария команду `for i in ui post-py comment; do cd src/$i; bash docker_build.sh; cd -; done`
+- Из директории docker выполнить команду `docker-compose -f docker-compose-logging.yml -f docker-compose.yml up -d`
