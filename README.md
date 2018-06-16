@@ -261,7 +261,8 @@ kubectl config delete-cluster kubernetes-the-hard-way
 `kubectl config get-contexts` - список всех контекстов
 `kubectl config current-context` - посмотреть текущий контекст
 `kubectl apply -f <filename/dir_with_yaml>` - запустить компонент в Kubernetes;
-`kubectl get deployment` - просмотр состояния Подов
+`kubectl get deployment` - просмотр состояния Подов;
+`kubectl get services` - просмотр состояния сервисов;
 `kubectl get pods --selector component=ui` - вывести список подов, например для компонента UI;
 `kubectl port-forward <pod-name> local_port:pod_port` - проброс локального порта в Под;
 `kubectl get nodes -o wide` - просмотреть IP адреса нод;
