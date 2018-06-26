@@ -1,0 +1,13 @@
+---
+service:
+  internalPort: 9292
+  externalPort: 80
+
+image:
+  repository: s1spinoza/ui
+  tag: latest
+
+postHost:
+postPort:
+commentHost:
+commentPort:

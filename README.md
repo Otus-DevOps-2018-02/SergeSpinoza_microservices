@@ -297,3 +297,21 @@ kubectl config delete-cluster kubernetes-the-hard-way
 - Для развертывания приложения reddit в Kubernetes необходимо последовательно выполнить команды, находясь в директории `kubernetes/reddit`: 
   - `kubectl apply -f ./dev-namespace.yml`;
   - `kubectl apply -f ./ -n dev`.
+
+
+# Homework-24
+
+## Основное задание
+- Установлен и настроен Helm и Tiller;
+- Созданы helm-Chart'ы для приложения reddit;
+
+## Как запустить
+- Из директории `kubernetes/terraform` выполнить последовательно команды:
+  - `terraform init`;
+  - `terraform apply`;
+- Из директории `kubernetes/reddit` выполнить команду `kubectl apply -f tiller.yml`;
+- Для запуска tiller-сервера выполнить команду `helm init --service-account tiller`;
+- Удостовериться что под запущен, выполнив команду `kubectl get pods -n kube-system --selector app=helm`;
+- Загрузить зависимости, выполнив команду `helm dep update ./reddit`, находясь в директории `kubernetes/Charts`;
+- Установить приложение, выполнив команду `helm install reddit --name reddit-test`, находясь в директории `kubernetes/Charts/reddit`;
+- При изменении Chart'ов - выполнить команду для обновления `helm upgrade reddit-test ./reddit` из директории `kubernetes/Charts`
