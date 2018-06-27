@@ -299,13 +299,18 @@ kubectl config delete-cluster kubernetes-the-hard-way
   - `kubectl apply -f ./ -n dev`.
 
 
-# Homework-24
+# Homework-25
 
 ## Основное задание
 - Установлен и настроен Helm и Tiller;
 - Созданы helm-Chart'ы для приложения reddit;
+- Развернут Gitlab-CI;
+- Настроен Pipeline для приложения;
 
 ## Как запустить
+
+### Первая часть задания
+- Скопировать `kubernetes/terraform/stage/terraform.tfvars.example` и задать свои переменные;
 - Из директории `kubernetes/terraform` выполнить последовательно команды:
   - `terraform init`;
   - `terraform apply`;
@@ -315,3 +320,12 @@ kubectl config delete-cluster kubernetes-the-hard-way
 - Загрузить зависимости, выполнив команду `helm dep update ./reddit`, находясь в директории `kubernetes/Charts`;
 - Установить приложение, выполнив команду `helm install reddit --name reddit-test`, находясь в директории `kubernetes/Charts/reddit`;
 - При изменении Chart'ов - выполнить команду для обновления `helm upgrade reddit-test ./reddit` из директории `kubernetes/Charts`
+- Для удаления - выполнить команду `helm del --purge <chart_name>`
+
+### Gitlab-CI
+- Добавить новый пул узлов bigpool;
+- Включить Legacy authorization (Kubernetes clusters -> Настройки кластера cluster -> Установить Legacy authorization Enable);
+- Из директории `kubernetes/Charts/gitlab-omnibus` выполнить команду `helm install --name gitlab . -f values.yaml`
+- Добавить группу s1spinoza и проекты ui, post, comment, reddit-deploy;
+- Добавить в Gitlab 2 переменные - CI_REGISTRY_USER и CI_REGISTRY_PASSWORD (логин и пароль на DockerHub);
+- Сделать пуш соответствующих частей приложения (сервисов) в соответствующий проект, причем в проект reddit-deploy запушить в самом конце;
