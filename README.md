@@ -306,6 +306,7 @@ kubectl config delete-cluster kubernetes-the-hard-way
 - Созданы helm-Chart'ы для приложения reddit;
 - Развернут Gitlab-CI;
 - Настроен Pipeline для приложения;
+- Задание со * - связаны пайплайны сборки образов и пайплайн деплоя на staging и production так, чтобы после релиза образа из ветки мастер - запускался деплой уже новой версии приложения на production (оставил ручной запуск со stage на production. Для автоматического - надо убрать в файле .gitlab-ci.yml приложения reddit-deploy строчку `when: manual` в секции `production`)(запуск описан ниже).
 
 ## Как запустить
 
@@ -321,6 +322,10 @@ kubectl config delete-cluster kubernetes-the-hard-way
 - Установить приложение, выполнив команду `helm install reddit --name reddit-test`, находясь в директории `kubernetes/Charts/reddit`;
 - При изменении Chart'ов - выполнить команду для обновления `helm upgrade reddit-test ./reddit` из директории `kubernetes/Charts`
 - Для удаления - выполнить команду `helm del --purge <chart_name>`
+
+### Для задания со *
+- Создать триггер в проекте reddit-deploy (Setting -> CI/CD -> Pipeline triggers) и скопировать Token;
+- Добавить переменную DEPLOY_TRIGGER в каждом из проектов ui, post, comment (Setting -> CI/CD -> Secret variables) с ранее скопированным значением;
 
 ### Gitlab-CI
 - Добавить новый пул узлов bigpool;
