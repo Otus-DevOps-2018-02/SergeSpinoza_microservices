@@ -334,3 +334,42 @@ kubectl config delete-cluster kubernetes-the-hard-way
 - Добавить группу s1spinoza и проекты ui, post, comment, reddit-deploy;
 - Добавить в Gitlab 2 переменные - CI_REGISTRY_USER и CI_REGISTRY_PASSWORD (логин и пароль на DockerHub);
 - Сделать пуш соответствующих частей приложения (сервисов) в соответствующий проект, причем в проект reddit-deploy запушить в самом конце;
+
+
+# Homework-26
+
+## Основное задание
+- Развернул и настроил Prometheus для сбора метрик в k8s;
+- Разбил конфигурацию job’а `reddit-endpoints` (слайд 24) так, чтобы было 3 job’а для каждой из компонент приложений (post-endpoints, commentendpoints, ui-endpoints), а reddit-endpoints закоментировал;
+- Развернул и настроил Grafana;
+- получившиеся дашборды экспортировал в каталог `kubernetes/grafana_dashboards`;
+- Настроили EFK для сбора логов в k8s.
+
+## Как запустить
+- В настройках:
+  - Stackdriver Logging - Отключен
+  - Stackdriver Monitoring - Отключен
+  - Устаревшие права доступа - Включено
+- Из Helm-чарта установим ingress-контроллер nginx, выполнив команду `helm install stable/nginx-ingress --name nginx`
+- Найдите IP-адрес, выданный nginx’у, выполнив команду `kubectl get svc`
+- Прописать в /etc/hosts: `Найденный_выше_IP reddit reddit-prometheus reddit-grafana reddit-non-prod production reddit-kibana staging prod`
+- Запустить Prometheus в k8s из charsts/prometheus, выполнив команду `helm upgrade prom . -f custom_values.yml --install`
+- Запустить приложение, выполнив команды из директории kubernetes/Charts:
+  - `helm upgrade reddit-test ./reddit —install`
+  - `helm upgrade production --namespace production ./reddit --install`
+  - `helm upgrade staging --namespace staging ./reddit —install`
+- Запустим Grafana (команда из 33 слайда не корректная):
+  - ```helm upgrade --install grafana stable/grafana \
+--set "service.type=NodePort" \
+--set "ingress.enabled=true" \
+--set "ingress.hosts={reddit-grafana}"```
+- Узнаем пароль пользователя admin для Grafana, выполнив команду `kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo`;
+- Загрузить в Grafana готовые дашборды из директории `kubernetes/grafana_dashboards`;
+- Добавить label самой мощной ноде в кластере, выполнив команду `kubectl label node gke-cluster-1-big-pool-b4209075-tvn3 elastichost=true` (вместо gke-cluster-1-big-pool-b4209075-tvn3 подставить название своей ноды);
+- Запустить стек EFK, выполнив команду `kubectl apply -f ./efk` из директории kubernetes;
+- Установить Kibana из helm чарта:
+  - ```helm upgrade --install kibana stable/kibana \
+--set "ingress.enabled=true" \
+--set "ingress.hosts={reddit-kibana}" \
+--set "env.ELASTICSEARCH_URL=http://elasticsearch-logging:9200" \
+--version 0.1.1```
