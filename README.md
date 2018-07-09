@@ -201,3 +201,34 @@ gitlab-ci`;
 ## Как запустить
 - Собрать образы, выполнив из корня репозитария команду `for i in ui post-py comment; do cd src/$i; bash docker_build.sh; cd -; done`
 - Из директории docker выполнить команду `docker-compose -f docker-compose-logging.yml -f docker-compose.yml up -d`
+
+
+# Homework-22
+
+## Основное задание
+- Созданы необходимые манифесты в каталоге `kubernetes/reddit`;
+- Пройден туториал Kubernetes The Hard way (https://github.com/kelseyhightower/kubernetes-the-hard-way).
+
+## Дополнительное задание со * 
+- Пройден тот же туториал Kubernetes The Hard way, но с использованием плейбуков на Ansible (оригинал взят отсюда https://github.com/jugatsu/kubernates-the-hard-way-using-only-ansible и внесены небольшие изменения, чтобы заработало).
+
+## Как запустить задание со *
+- Перейти в каталог `kubernetes/ansible`;
+- Выполнить создание ключа, используя команду `ssh-keygen -f ./files/ssh/k8s_the_hard_way -P "" -C k8s`;
+- Создать сервисный аккаунт в GCP и сохранить json файл в каталог `kubernetes/ansible/files`;
+- Скопировать пример файла и внести необходимые данные (можно взять из json файла) `cp .env.gce.example .env.gce`;
+- Сделать экспорт переменных окружения export $(cat .env.gce);
+- Скопировать пример файла и внести необходимые данные (можно взять из json файла) `cp ./inventory/gce.ini.example ./inventory/gce.ini`;
+- Удостовериться, что в этом проекте нет никаких других инстансов, иначе будет ошибка;
+- Запустить плейбук Ansible `ansible-playbook playbook.yml` (при необходимости закоментировать первые 2 инклуда в playbook.yml);
+- Проверить, что все успешно развернулось можно командами:
+```
+kubectl get cs
+kubectl get no
+```
+- Выполнить очистку после успешной проверки командами:
+```
+ansible-playbook 14-cleanup.yml
+kubectl config delete-context kubernetes-the-hard-way
+kubectl config delete-cluster kubernetes-the-hard-way
+```
