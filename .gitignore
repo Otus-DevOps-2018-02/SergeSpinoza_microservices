@@ -8,3 +8,7 @@ variables.json
 .terraform/
 mongrelion.docker
 .env
+
+# Certs
+*.crt
+*.key

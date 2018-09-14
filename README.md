@@ -261,9 +261,39 @@ kubectl config delete-cluster kubernetes-the-hard-way
 `kubectl config get-contexts` - список всех контекстов
 `kubectl config current-context` - посмотреть текущий контекст
 `kubectl apply -f <filename/dir_with_yaml>` - запустить компонент в Kubernetes;
-`kubectl get deployment` - просмотр состояния Подов
+`kubectl get deployment` - просмотр состояния Подов;
+`kubectl get services` - просмотр состояния сервисов;
 `kubectl get pods --selector component=ui` - вывести список подов, например для компонента UI;
 `kubectl port-forward <pod-name> local_port:pod_port` - проброс локального порта в Под;
 `kubectl get nodes -o wide` - просмотреть IP адреса нод;
 `kubectl describe service ui -n dev | grep NodePort` - найти номер порта (в данном случае для модуля ui в namespace dev);
 `kubectl proxy` - proxy для входа в dashboard Kubernetes;
+`kubectl get ingress` - просмотреть адрес балансира ingress;
+`kubectl get persistentvolume` - просмотреть PersistentVolume.
+
+
+# Homework-24
+
+## Основное задание
+- Ознакомились с работой сервиса kube-dns;
+- Ознакомились с работой сервиса kube-proxy;
+- Настроен балансир сервиса UI с применением объекта типа LoadBalancer;
+- Настроен балансир сервиса UI с применением объекта типа Ingress (использован плагин Ingress Controller);
+- Настроен Ingress с применением TLS, созданы необходимые сертификаты для работы HTTPS;
+- Ознакомились с работой NetworkPolicy, включена работа с сетевым плагином Calico;
+- Внесены изменения в файл mongo-network-policy.yml, чтобы сервис post мог достучаться до базы данных;
+- Ознакомились с работой PersistentVolume (создан ресурс хранилища);
+- Ознакомились с возможностью создания запроса на хранилище - PersistentVolumeClaim;
+
+## Дополнительное задание со *
+- Описан создаваемый объект Secret в виде Kubernetes-манифеста (файл ui-ingress-secret.yml). Данные файлов tls.crt и tls.key необходимо вносить в переменные в файле ui-ingress-secret.yml в формате base64. Для конвертирования содержимого сертификатов в base64 необходимо выполнить команды `base64 tls.crt` и `base64 tls.key`.
+
+## Как запустить
+- Проверить, что в настройках GCE включен плагин Ingress Controller (Kubernetes Engine -> Clusters -> Выбрать свой кластер -> Add-ons -> HTTP load balancing -> Enabled)
+- Включить network-policy для GCE, выполнив последовательно команды:
+  - `gcloud beta container clusters update cluster-1 --zone=europe-west1-b --update-addons=NetworkPolicy=ENABLED`
+  - `gcloud beta container clusters update cluster-1 --zone=europe-west1-b --enable-network-policy`
+- Создать диск, выполнив команду `gcloud compute disks create --size=25GB --zone=europe-west1-b reddit-mongo-disk`;
+- Для развертывания приложения reddit в Kubernetes необходимо последовательно выполнить команды, находясь в директории `kubernetes/reddit`: 
+  - `kubectl apply -f ./dev-namespace.yml`;
+  - `kubectl apply -f ./ -n dev`.
