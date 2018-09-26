@@ -297,3 +297,40 @@ kubectl config delete-cluster kubernetes-the-hard-way
 - Для развертывания приложения reddit в Kubernetes необходимо последовательно выполнить команды, находясь в директории `kubernetes/reddit`: 
   - `kubectl apply -f ./dev-namespace.yml`;
   - `kubectl apply -f ./ -n dev`.
+
+
+# Homework-25
+
+## Основное задание
+- Установлен и настроен Helm и Tiller;
+- Созданы helm-Chart'ы для приложения reddit;
+- Развернут Gitlab-CI;
+- Настроен Pipeline для приложения;
+- Задание со * - связаны пайплайны сборки образов и пайплайн деплоя на staging и production так, чтобы после релиза образа из ветки мастер - запускался деплой уже новой версии приложения на production (оставил ручной запуск со stage на production. Для автоматического - надо убрать в файле .gitlab-ci.yml приложения reddit-deploy строчку `when: manual` в секции `production`)(запуск описан ниже).
+
+## Как запустить
+
+### Первая часть задания
+- Скопировать `kubernetes/terraform/stage/terraform.tfvars.example` и задать свои переменные;
+- Из директории `kubernetes/terraform` выполнить последовательно команды:
+  - `terraform init`;
+  - `terraform apply`;
+- Из директории `kubernetes/reddit` выполнить команду `kubectl apply -f tiller.yml`;
+- Для запуска tiller-сервера выполнить команду `helm init --service-account tiller`;
+- Удостовериться что под запущен, выполнив команду `kubectl get pods -n kube-system --selector app=helm`;
+- Загрузить зависимости, выполнив команду `helm dep update ./reddit`, находясь в директории `kubernetes/Charts`;
+- Установить приложение, выполнив команду `helm install reddit --name reddit-test`, находясь в директории `kubernetes/Charts/reddit`;
+- При изменении Chart'ов - выполнить команду для обновления `helm upgrade reddit-test ./reddit` из директории `kubernetes/Charts`
+- Для удаления - выполнить команду `helm del --purge <chart_name>`
+
+### Для задания со *
+- Создать триггер в проекте reddit-deploy (Setting -> CI/CD -> Pipeline triggers) и скопировать Token;
+- Добавить переменную DEPLOY_TRIGGER в каждом из проектов ui, post, comment (Setting -> CI/CD -> Secret variables) с ранее скопированным значением;
+
+### Gitlab-CI
+- Добавить новый пул узлов bigpool;
+- Включить Legacy authorization (Kubernetes clusters -> Настройки кластера cluster -> Установить Legacy authorization Enable);
+- Из директории `kubernetes/Charts/gitlab-omnibus` выполнить команду `helm install --name gitlab . -f values.yaml`
+- Добавить группу s1spinoza и проекты ui, post, comment, reddit-deploy;
+- Добавить в Gitlab 2 переменные - CI_REGISTRY_USER и CI_REGISTRY_PASSWORD (логин и пароль на DockerHub);
+- Сделать пуш соответствующих частей приложения (сервисов) в соответствующий проект, причем в проект reddit-deploy запушить в самом конце;

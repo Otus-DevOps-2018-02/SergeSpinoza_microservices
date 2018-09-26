@@ -8,6 +8,7 @@ variables.json
 .terraform/
 mongrelion.docker
 .env
+kubernetes/Charts/Gitlab_ci
 
 # Certs
 *.crt
